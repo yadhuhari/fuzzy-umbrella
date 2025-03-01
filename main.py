@@ -100,7 +100,20 @@ async def callback(bot, msg):
 
 @HKZ.on_message(filters.command("login"))
 async def login_command(client, message):
-    await message.reply_text("Share your contact 📞 using the button to continue.")
+    await message.reply_text(
+        text="Share your contact 📞 using the button to continue.",
+        reply_markup=InlineKeyboardMarkup( [[
+            InlineKeyboardButton("Share Contact ☎", request_contact=True)
+            ]]
+            )
+        )
+
+@HKZ.on_message(filters.contact)
+async def contact_shared(client, message):
+    await message.reply_text("Sending OTP Code to your Telegram..📲")
+
+print("Bot Started")
+HKZ.run()
 
 
     
