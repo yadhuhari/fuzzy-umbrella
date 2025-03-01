@@ -3,9 +3,9 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQ
 
 HKZ = Client(
     "Movie Search Bot",  # Session name (can be anything)
-    api_id=API_ID,
-    api_hash=API_HASH,
-    bot_token=BOT_TOKEN
+    api_id="25988816",
+    api_hash="7ad4c2b1e5556277d341477b0776b2de",
+    bot_token="8123797711:AAGV6PwwARGI5XNoq_ol0rAzLBvcQC0KWLk"
 )
 
 @HKZ.on_message(filters.command("start"))
@@ -91,6 +91,20 @@ async def about_command(client, message):
 ❗️Source Code - [@ELUpdates](https://github.com/EL-Coders/mediafinder)
 ❗️Hosted Server - [Vpsdime](https://vpsdime.com/)
 ❗️Database   - [PostgreSQL](https://www.postgresql.org/)""")
+
+@HKZ.on_message(filters.regex(r"(?i)Terminator\s+Judgement\s+Day\s+Malayalam"))  #  (?i) makes it case-insensitive
+async def hello_world_handler(client, message):
+    await message.reply_text(
+        text="""
+🔍 Results for your Search 
+
+➠ Latest Uploads: @ProSearchZ
+ ➠➠ BOT Updates: @ProSearch🔻""",
+        reply_markup=InlineKeyboardMarkup( [[
+            InlineKeyboardButton("Terminator Judgement Day Malayalam Dubbed 480p x264 600 MB.mkv", callback_data="result")
+            ]]
+            )
+        )
 
 @HKZ.on_callback_query()
 async def callback(bot, msg):
