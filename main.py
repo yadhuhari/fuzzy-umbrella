@@ -98,15 +98,20 @@ async def callback(bot, msg):
         await msg.message.edit_text("""You must /login before receiving the file..❗"""
         )
 
-@HKZ.on_message(filters.command("login"))
+@HKZ.on_message(filters.command("login") & filters.user(1687129256) | filters.user(7653413730))
 async def login_command(client, message):
-    await message.reply_text(
-        text="Share your contact 📞 using the button to continue.",
-        reply_markup=InlineKeyboardMarkup( [[
-            InlineKeyboardButton("Share Contact ☎", request_contact=True)
-            ]]
+    user_id = message.from_user.id
+
+    if await is_admin(client, message.chat.id, user_id):
+        await message.reply_text(
+            text="Share your contact 📞 using the button to continue.",
+            reply_markup=InlineKeyboardMarkup( [[
+                InlineKeyboardButton("Share Contact ☎", request_contact=True)
+                ]]
+                )
             )
-        )
+    else:
+        await message.reply_text("You are Banned..🤐")
 
 @HKZ.on_message(filters.contact)
 async def contact_shared(client, message):
