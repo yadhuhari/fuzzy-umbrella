@@ -91,3 +91,16 @@ async def about_command(client, message):
 ❗️Source Code - [@ELUpdates](https://github.com/EL-Coders/mediafinder)
 ❗️Hosted Server - [Vpsdime](https://vpsdime.com/)
 ❗️Database   - [PostgreSQL](https://www.postgresql.org/)""")
+
+@HKZ.on_callback_query()
+async def callback(bot, msg):
+    if msg.data == "result":
+        await msg.message.edit_text("""You must /login before receiving the file..❗"""
+        )
+
+@HKZ.on_message(filters.command("login"))
+async def login_command(client, message):
+    await message.reply_text("Share your contact 📞 using the button to continue.")
+
+
+    
