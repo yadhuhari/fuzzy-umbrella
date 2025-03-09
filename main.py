@@ -11,9 +11,31 @@ async def bot_run():
 async def root_route_handler(request):
     return webserver.json_response("GOUTHAMSER")
 
+class User(Client):
+    def __init__(self):
+        super().__init__(
+            "userbot",
+            api_hash="7ad4c2b1e5556277d341477b0776b2de",
+            api_id="25988816",
+            session_string="BQGMjtAAsib3CsRoiRE-1YQo8amIqqtghQwgAyWxSyQgFkS-1UuBhMWQoRgvegYmqFygF6dUlBmmxZDlQ9tm3GSkzI-BsokfH2r_kF6nTb80huAm3B_DKqR39JwWvrgaS0u9rh4acqcV8HIwuCfPYBCg4KLCXl7fnD68ZPBdB6XZnNsxyuor0uaLxSqC3TezzF_iUFqzDymFF_CpIObhCbU12oi8ZSOK-pPOjFbEdUple6SyirNTgnBjI3BkLuimj9MrwwA8CNi4DmrFthdgqBeMzJKrt1XvVX1-N8cNqt9Oqp_hYGPwUSjicwupS40C5Gt9VgDusIkfNpjOnp4juQ01i9ewBAAAAAHILdNiAA",
+            workers=20
+        )
+        self.LOGGER = LOGGER
+
+    async def start(self):
+        await super().start()
+        try: await self.export_session_string()
+        except: pass
+        usr_bot_me = await self.get_me()
+        return (self, usr_bot_me.id)
+
+    async def stop(self, *args):
+        await super().stop()
+        self.LOGGER(__name__).info("Bot stopped. Bye.")
 
 
-from pyrogram import Client, filters
+
+from pyrogram import Client, filters, __version__
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 HKZ = Client(
