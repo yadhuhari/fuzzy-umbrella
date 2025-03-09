@@ -79,14 +79,8 @@ class Bot(Client):
         await super().stop()
         self.LOGGER(__name__).info("Bot stopped. Bye.")
 
-
-
-HKZ = Client(
-    "Movie Search Bot",  # Session name (can be anything)
-    api_id="25988816",
-    api_hash="7ad4c2b1e5556277d341477b0776b2de",
-    bot_token="8123797711:AAGV6PwwARGI5XNoq_ol0rAzLBvcQC0KWLk"
-)
+def LOGGER(name: str) -> logging.Logger:
+    return logging.getLogger(name)
 
 @Client.on_message(filters.command("start"))
 async def start_command(client, message):
